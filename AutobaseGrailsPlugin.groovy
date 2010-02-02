@@ -26,7 +26,7 @@ class AutobaseGrailsPlugin {
 
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
-    def version = '0.8.3'
+    def version = '0.8.9'
     def grailsVersion = "1.1 > *"
     def dependsOn = [hibernate: "1.1 > *"]
     def observe = []
