@@ -26,11 +26,16 @@ class AutobaseGrailsPlugin {
 
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
-    def version = '0.9.0'
+    def version = '0.9.1'
     def grailsVersion = "1.1 > *"
     def dependsOn = [hibernate: "1.1 > *"]
     def observe = []
     def watchedResources = []
+    def pluginExcludes = [ 
+      "web-app/**",
+      "grails-app/**"
+    ]   
+
 
     // TODO Fill in these fields
     def author = "Robert Fischer"
