@@ -50,7 +50,7 @@ class ColumnCatcher extends Proxy {
         } else {
             try {
                 col."set${StringUtils.capitalize(it.key)}"(it.value?.toString())
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 col."set${StringUtils.capitalize(it.key)}"(it.value)
             }
         }
