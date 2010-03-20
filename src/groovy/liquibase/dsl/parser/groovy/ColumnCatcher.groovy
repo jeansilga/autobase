@@ -48,7 +48,11 @@ class ColumnCatcher extends Proxy {
         } else if(it.key == "index") {
           col.index = it.value ? new Integer(it.value) : null
         } else {
-          col."set${StringUtils.capitalize(it.key)}"(it.value?.toString())
+            try {
+                col."set${StringUtils.capitalize(it.key)}"(it.value?.toString())
+            } catch (Exception e) {
+                col."set${StringUtils.capitalize(it.key)}"(it.value)
+            }
         }
       } catch(Exception e) {
         throw new RuntimeException("Could not assign ${it.key} value ${it.value} (${it.value?.class})", e)
