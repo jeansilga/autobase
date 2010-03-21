@@ -3,4 +3,4 @@
 //in other words, all projects checked in to subversion with the standard trunk/branches/tags convention
 //will be sharing the same 'project', namely 'trunk, which in turn leads to nastiness. We set the
 //plugins dir to a local directory to isolate ourselves here
-grails.project.plugins.dir="./plugins"
+//grails.project.plugins.dir="./plugins"
