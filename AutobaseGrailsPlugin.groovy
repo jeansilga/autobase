@@ -21,16 +21,20 @@ import liquibase.parser.factory.OpenChangeFactory
 import org.apache.log4j.*
 import org.slf4j.bridge.*
 
+import com.netvitesse.nvconnect.migration.MigrationArtefactHandler
+
 
 class AutobaseGrailsPlugin {
 
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
-    def version = '0.9.2'
+    def version = '0.10.0'
     def grailsVersion = "1.1 > *"
-    def dependsOn = [hibernate: "1.1 > *"]
-    def observe = []
-    def watchedResources = []
+   
+    def loadBefore = ['quartz']
+
+    def dependsOn = [:]
+        
     def pluginExcludes = [ 
       "web-app/**",
       "grails-app/**"
@@ -38,7 +42,7 @@ class AutobaseGrailsPlugin {
 
 
     // TODO Fill in these fields
-    def author = "Robert Fischer"
+    def author = "Robert Fischer, Jun Chen, Antoine roux"
     def authorEmail = "robert.fischer@smokejumperit.com"
     def title = "Automate your database work as much as possible"
     def description = '''\
@@ -51,6 +55,15 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
     def documentation = "http://github.com/RobertFischer/autobase/wikis"
 		//"http://grails.org/Autobase+Plugin"
 
+	//register the artefact hanlder
+	def artefacts = [new MigrationArtefactHandler()]
+	
+	def watchedResources = [
+		"file:./grails-app/migrations/*Migration.groovy",
+		"file:./plugins/*/grails-app/migrations/*Migration.groovy"
+	]
+	
+	
     private static final Closure doInstallSlf4jBridge = {
       try {
         SLF4JBridgeHandler.install()
@@ -79,41 +92,60 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
       }
     }
 
-		private static final Closure doMigrate = {application, appCtx ->
+		private static final Closure doMigrate = {application,appCtx ->
 			try {
           def runOnCreateDrop = application.config.autobase.runOnCreateDrop
 			    if (runOnCreateDrop == false && application.config.dataSource.dbCreate == 'create-drop') {
             log.info("Skipping Autobase migration due to create-drop (set 'autobase.runOnCreateDrop' to 'true' in Config.groovy to run anyway)")
           } else {
+		  
             log.info("---- Starting Autobase migrations  ----")
-            Autobase.migrate(appCtx)
+			
+			// modified by jun Chen
+			// Autobase.migrate(appCtx)
+            Autobase.migrate(appCtx,application)
+			  			
             log.info("---- Autobase migrations completed ----")
-          } 
+		
+			} 
+
 			} catch(Exception e) {
 				GrailsUtil.deepSanitize(e)
 				log.error("Error during Autobase migration", e)
 			}
 		}
 
-    def doWithSpring = { }
+    def doWithSpring = { 
+		}
 
     def doWithApplicationContext = { appCtx ->
-      doInstallSlf4jBridge()
-      doRegisterExtensions()
-      doMigrate(application, appCtx)
+		doInstallSlf4jBridge()
+		doRegisterExtensions()
+		doMigrate(application, appCtx)
     }
 
     def doWithWebDescriptor = {}
 
     // Do at the very last moment of app start-up
-    def doWithDynamicMethods = {}
+    def doWithDynamicMethods = {
+    }
 
     // Implements code that is executed when any artefact that this plugin is
     // watching is modified and reloaded. The event contains: event.source,
     // event.application, event.manager, event.ctx, and event.plugin.
-    def onChange = {}
+	
+	// modified by jun Chen
+	// def onChange = {}
+    def onChange = { event ->
+		//check the class load by grails is the type expected
+		if (application.isArtefactOfType(MigrationArtefactHandler.TYPE, event.source)) {
+			log.debug("Migration ${event.source} changed. Reloading .. }")
+			application.addArtefact(MigrationArtefactHandler.TYPE, event.source)
+			doMigrate(application, applicationContext)
+		}
+	}
 
-		// Implements code that is executed when the project configuration changes.
+	// Implements code that is executed when the project configuration changes.
    	// The event is the same as for 'onChange'.
     def onConfigChange = {}
 }

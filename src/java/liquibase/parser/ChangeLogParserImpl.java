@@ -21,6 +21,9 @@ import liquibase.FileOpener;
 import liquibase.database.Database;
 
 import java.util.Map;
+import java.util.List;
+
+import org.codehaus.groovy.grails.commons.DefaultGrailsApplication;
 
 /**
 * Interface that must be implemented for a Liquibase ChangeLogParser implementation.  A ChangeLogParser must also have a no-argument constructor.
@@ -30,6 +33,6 @@ public interface ChangeLogParserImpl {
 	/**
 	*	 Method responsible for parsing a particular file.
 	*/
-	public DatabaseChangeLog parse(String physicalChangeLogLocation, FileOpener fileOpener, Map changeLogProperties, Database db);
+	public DatabaseChangeLog parse(String physicalChangeLogLocation, FileOpener fileOpener, Map changeLogProperties, Database db, DefaultGrailsApplication app );
 
 }

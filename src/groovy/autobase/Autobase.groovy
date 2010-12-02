@@ -29,20 +29,27 @@ class Autobase {
 
   private static final InheritableThreadLocal appCtxHolder = new InheritableThreadLocal()
 
-	static void migrate(appCtx) {
+    // modified by jun Chen
+	static void migrate(appCtx, app) {
     appCtxHolder.set(appCtx)
     boolean attachedSession = false
     try {
       attachedSession = attachHibernateSession()
       assignSystemProperties();
-      def fileOpener = findFileOpener() 
-      log.debug("Using a file opener of type ${fileOpener?.class}")
+//      def fileOpener = findFileOpener() 
+//      log.debug("Using a file opener of type ${fileOpener?.class}")
       Database db = getDatabase();
-      if(fileOpener.getResourceAsStream("./migrations/changelog.groovy")) {
-        new LiquibaseDsl("./migrations/changelog.groovy", fileOpener, db).update(null)
-      } else {
-        log.warn("No changelog found")
-      }
+	  
+	  /**
+	   * modified by jun Chen, file changelog.groovy is not nescesary any more.
+	   */
+	  
+      // if(fileOpener.getResourceAsStream("./grails-app/migrations/changelog.groovy")) {
+	     new LiquibaseDsl("",null, db, app).update(null)
+      // new LiquibaseDsl("./grails-app/migrations/changelog.groovy", fileOpener, db, app).update(null)
+      //} else {
+      //  log.warn("No changelog found")
+      //}
     } catch(Exception e) {
       GrailsUtil.deepSanitize(e)
       throw e

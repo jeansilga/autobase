@@ -34,6 +34,9 @@ import liquibase.dsl.parser.groovy.GroovyChangeLogParser
 import java.util.logging.Logger
 import java.util.logging.Level
 
+import java.util.List
+import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
+
 /**
 *  Executes the Liquibase command with appropriate mangling to handle the DSLs.
 */
@@ -41,10 +44,12 @@ class LiquibaseDsl extends Liquibase {
   private static final Logger log = liquibase.log.LogFactory.logger
 	private static final String PARSER_SUFFIX_PREFIX = "lbdsl.parser.suffix"
   private final String changeLogPath;
+  private final DefaultGrailsApplication grailApp
 
-	public LiquibaseDsl(String changeLogFile, FileOpener opener, Database db) {
+	public LiquibaseDsl(String changeLogFile, FileOpener opener, Database db, DefaultGrailsApplication app ) {
 		super(changeLogFile, opener, db)
     changeLogPath = changeLogFile
+	grailApp = app
   
 		// Now prep the factory
 		//ChangeLogParserFactory.register("xml", XMLChangeLogParser.class); -- XMLChangeLogParser is-not-a ChangeLogParserImpl
@@ -61,15 +66,34 @@ class LiquibaseDsl extends Liquibase {
 
       try {
           database.checkDatabaseChangeLogTable();
+		  
+		  /**
+		   *  delete by jun Chen
+		   */
+		  
+//          def parser = ChangeLogParserFactory.getParser(StringUtils.substringAfterLast(changeLogPath, "."))
 
-          def parser = ChangeLogParserFactory.getParser(StringUtils.substringAfterLast(changeLogPath, "."))
-          if(parser == null) { // Couldn't find a match: fall back to default!
-            System.err.println "===FALLING BACK TO DEFAULT==="
-            parser = new XMLChangeLogParser()
-          }
+//		    if(parser == null) { // Couldn't find a match: fall back to default!
+//            System.err.println "===FALLING BACK TO DEFAULT==="
+//            parser = new XMLChangeLogParser()
+//          }
 
-          DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database);
-          changeLog.validate(database);
+		 
+//		   DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database);
+      	 
+		     /** add by jun chen
+		      *  The file "changelog.groovy" is not nessasary any more.
+		      *  -----------------------------------------------------------------------------
+		      */
+		     
+		     def parser = new GroovyChangeLogParser(); 	 
+			 DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database, grailApp);
+          
+			 /**
+			  * ------------------------------------------------------------------------------  
+			 */
+			 
+		  changeLog.validate(database);
           ChangeLogIterator logIterator = new ChangeLogIterator(changeLog, 
             [
               new ShouldRunChangeSetFilter(database),
@@ -77,15 +101,6 @@ class LiquibaseDsl extends Liquibase {
               new DbmsChangeSetFilter(database)
             ] as liquibase.parser.filter.ChangeSetFilter[]);
           logIterator.run(new UpdateVisitor(database), database);
-      } catch (ValidationFailedException e) {
-        //TODO: Figure out what we do with the log level here, we get here from a failed precondition on the databaseChangeLog level (and perhaps from elsewhere) 
-        log.log(Level.INFO, e.getMessage())
-
-      } catch(PreconditionFailedException e) {
-        log.log(Level.SEVERE, "Terminating run due to failed Precondition")
-        
-      } catch (LiquibaseException e) {
-          throw e;
       } finally {
           try {
               lockHandler.releaseLock();

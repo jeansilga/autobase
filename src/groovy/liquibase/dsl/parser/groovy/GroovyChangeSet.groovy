@@ -55,7 +55,10 @@ class GroovyChangeSet extends ChangeSet implements ConditionallyExecuted {
 	public GroovyChangeSet(String id, String author, boolean alwaysRun, 
 				boolean runOnChange, String filePath, String physicalFilePath, String contextList, String dbmsList) 
 	{ 
-		super(id, author, alwaysRun, runOnChange, filePath, physicalFilePath, contextList, dbmsList)
+		// modified by jun Chen
+		// super(id, author, alwaysRun, runOnChange, filePath, physicalFilePath, contextList, dbmsList)
+
+		super(id, author, alwaysRun, runOnChange, filePath, physicalFilePath, contextList, dbmsList, true)
 	} 
 
   void comment(String cmnt) {

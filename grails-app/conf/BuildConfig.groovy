@@ -1,6 +1,29 @@
-//We do this since grails by default stores the settings for the project under the users home directory 
-//in a sub/sub/../ directory named by the project name which in this case was determined to be 'trunk'
-//in other words, all projects checked in to subversion with the standard trunk/branches/tags convention
-//will be sharing the same 'project', namely 'trunk, which in turn leads to nastiness. We set the
-//plugins dir to a local directory to isolate ourselves here
-//grails.project.plugins.dir="./plugins"
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
+//grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.dependency.resolution = {
+    // inherit Grails' default dependencies
+    inherits( "global" ) {
+        // uncomment to disable ehcache
+        // excludes 'ehcache'
+    }
+    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    repositories {
+        grailsPlugins()
+        grailsHome()
+
+        // uncomment the below to enable remote dependency resolution
+        // from public Maven repositories
+        //mavenLocal()
+        mavenCentral()
+        //mavenRepo "http://snapshots.repository.codehaus.org"
+        //mavenRepo "http://repository.codehaus.org"
+        //mavenRepo "http://download.java.net/maven/2/"
+        //mavenRepo "http://repository.jboss.com/maven2/"
+    }
+    dependencies {
+        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+    }
+}
+

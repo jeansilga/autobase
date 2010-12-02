@@ -1,14 +1,11 @@
-import org.codehaus.groovy.grails.commons.GrailsClassUtils as GCU
-import liquibase.dsl.properties.LbdslProperties as Props
-import org.apache.commons.lang.StringUtils as SU
-import java.text.SimpleDateFormat
-
-Ant.property(environment:"env")                             
-grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
-
-includeTargets << new File ( "${grailsHome}/scripts/Init.groovy" )
-includeTargets << new File ( "${autobasePluginDir}/scripts/_MigrationBase.groovy" )
-
-target ('default': "Creates a new migration") {
-  depends(makeMigration)
-}
+	includeTargets << grailsScript("_GrailsInit")
+	includeTargets << grailsScript("_GrailsCreateArtifacts")
+	Ant.mkdir(dir:"${basedir}/grails-app/migrations")
+	target('default': "Creates a new configuration migration file ") {
+	    depends(checkVersion, parseArguments)
+	    def type = "Migration"
+	    promptForName(type: type)
+	    def name = argsMap["params"][0]
+		createArtifact(name: name, suffix: type, type: type, path: "grails-app/migrations")	
+		createUnitTest(name: name, suffix: type)			
+	}
