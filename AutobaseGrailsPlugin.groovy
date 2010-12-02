@@ -31,8 +31,6 @@ class AutobaseGrailsPlugin {
     def version = '0.10.0'
     def grailsVersion = "1.1 > *"
    
-    def loadBefore = ['quartz']
-
     def dependsOn = [:]
         
     def pluginExcludes = [ 
