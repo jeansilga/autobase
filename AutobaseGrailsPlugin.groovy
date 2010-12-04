@@ -90,31 +90,20 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
       }
     }
 
-		private static final Closure doMigrate = {application,appCtx ->
-			try {
-          def runOnCreateDrop = application.config.autobase.runOnCreateDrop
-			    if (runOnCreateDrop == false && application.config.dataSource.dbCreate == 'create-drop') {
+    private static final Closure doMigrate = {application,appCtx ->
+        
+        def runOnCreateDrop = application.config.autobase.runOnCreateDrop
+        if (runOnCreateDrop == false && application.config.dataSource.dbCreate == 'create-drop') {
             log.info("Skipping Autobase migration due to create-drop (set 'autobase.runOnCreateDrop' to 'true' in Config.groovy to run anyway)")
-          } else {
-		  
-            log.info("---- Starting Autobase migrations  ----")
-			
-			// modified by jun Chen
-			// Autobase.migrate(appCtx)
+        } else {
+            log.info("---- Starting Autobase migrations  ----")       
             Autobase.migrate(appCtx,application)
-			  			
             log.info("---- Autobase migrations completed ----")
-		
-			} 
-
-			} catch(Exception e) {
-				GrailsUtil.deepSanitize(e)
-				log.error("Error during Autobase migration", e)
-			}
-		}
+        }
+    }
 
     def doWithSpring = { 
-		}
+	}
 
     def doWithApplicationContext = { appCtx ->
 		doInstallSlf4jBridge()
@@ -132,7 +121,6 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
     // watching is modified and reloaded. The event contains: event.source,
     // event.application, event.manager, event.ctx, and event.plugin.
 	
-	// modified by jun Chen
 	// def onChange = {}
     def onChange = { event ->
 		//check the class load by grails is the type expected
