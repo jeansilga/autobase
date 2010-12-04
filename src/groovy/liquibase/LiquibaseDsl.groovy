@@ -59,56 +59,33 @@ class LiquibaseDsl extends Liquibase {
 		}
 	}
 
-  public void update(String contexts) throws LiquibaseException {
-
-      LockHandler lockHandler = LockHandler.getInstance(database);
-      lockHandler.waitForLock();
-
-      try {
-          database.checkDatabaseChangeLogTable();
-		  
-		  /**
-		   *  delete by jun Chen
-		   */
-		  
-//          def parser = ChangeLogParserFactory.getParser(StringUtils.substringAfterLast(changeLogPath, "."))
-
-//		    if(parser == null) { // Couldn't find a match: fall back to default!
-//            System.err.println "===FALLING BACK TO DEFAULT==="
-//            parser = new XMLChangeLogParser()
-//          }
-
-		 
-//		   DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database);
-      	 
-		     /** add by jun chen
-		      *  The file "changelog.groovy" is not nessasary any more.
-		      *  -----------------------------------------------------------------------------
-		      */
-		     
-		     def parser = new GroovyChangeLogParser(); 	 
-			 DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database, grailApp);
-          
-			 /**
-			  * ------------------------------------------------------------------------------  
-			 */
-			 
-		  changeLog.validate(database);
-          ChangeLogIterator logIterator = new ChangeLogIterator(changeLog, 
-            [
-              new ShouldRunChangeSetFilter(database),
-              new ContextChangeSetFilter(contexts),
-              new DbmsChangeSetFilter(database)
-            ] as liquibase.parser.filter.ChangeSetFilter[]);
-          logIterator.run(new UpdateVisitor(database), database);
-      } finally {
-          try {
-              lockHandler.releaseLock();
-          } catch (LockException e) {
-              log.log(Level.SEVERE, "Could not release lock", e);
-          }
-      }
-  }
+    public void update(String contexts) throws LiquibaseException {
+        
+        LockHandler lockHandler = LockHandler.getInstance(database);
+        lockHandler.waitForLock();
+        
+        try {
+            database.checkDatabaseChangeLogTable();
+            def parser = new GroovyChangeLogParser(); 	 
+            DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database, grailApp);
+            
+            changeLog.validate(database);
+            ChangeLogIterator logIterator = new ChangeLogIterator(changeLog, 
+                            [
+                                new ShouldRunChangeSetFilter(database),
+                                new ContextChangeSetFilter(contexts),
+                                new DbmsChangeSetFilter(database)
+                            ]
+                            as liquibase.parser.filter.ChangeSetFilter[]);
+            logIterator.run(new UpdateVisitor(database), database);
+        } finally {
+            try {
+                lockHandler.releaseLock();
+            } catch (LockException e) {
+                log.log(Level.SEVERE, "Could not release lock", e);
+            }
+        }
+    }
 
 
 }

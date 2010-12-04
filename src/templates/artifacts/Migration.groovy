@@ -4,9 +4,9 @@ class @artifact.name@ {
 
 		static migration = {
 			
-			    // List of the changeSet
+			    // List of changesets
 			
-				changeSet(id:'@ID@', author:'@AUTHOR@') { 
+				changeSet(id:'', author:'') { 
 						// Place change set code here
 				}
 		

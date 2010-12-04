@@ -29,11 +29,10 @@ import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 
 
 /**
-*		Provides access to the properties set in the directory denoted by the "lbdsl.home" property.
-*/
+ *		Provides access to the properties set in the directory denoted by the "lbdsl.home" property.
+ */
 class GroovyChangeLogParser implements ChangeLogParserImpl {
 
-	// added by jun Chen
 	private dbChangeLog
     
     List<Class> migrationClasses
@@ -44,22 +43,8 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
                                    FileOpener fileOpener, 
                                    Map changeLogProperties, Database db, 
                                    DefaultGrailsApplication app) {
-								
-								
-	    	/**  modified by jun chen
-		      *  The file "changelog.groovy" is not nessasary any more.
-		      */
-								   						   
-//		if(!fileOpener) {
-//			throw new IllegalArgumentException("Need to specify a fileOpener")
-//		}
-		
-		
-		
+
 		dbChangeLog = new GroovyDatabaseChangeLog(physicalChangeLogLocation, db);
-		
-		// modified by jun chen
-        //dbChangeLog.fileOpener = fileOpener;
 		dbChangeLog.grailsEnv = Environment.current.name
 
         this.migrationClasses = app.MigrationClasses
@@ -81,6 +66,11 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
 		migration.call()
 	}
     
+    /**
+     * 
+     * @return the migrations in the order they should be run.
+     * @author Antoine Roux
+     */
     List<Class> getSortedMigrations() {
         def result = new LinkedList<Class>()
         migrationClasses.each { migration ->
@@ -98,7 +88,6 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
                       currentInstance.runAfter?.contains(migration.originalClass)) {
                           def movingMigration = result[i]
                           result -= movingMigration
-                         // result.add(lastRunAfterIndex + 1, movingMigration) 
 						  if (lastRunAfterIndex + 1 < result.size())
 						  result.add(lastRunAfterIndex + 1, movingMigration)
 					      else
