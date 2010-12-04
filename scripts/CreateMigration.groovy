@@ -7,5 +7,4 @@
 	    promptForName(type: type)
 	    def name = argsMap["params"][0]
 		createArtifact(name: name, suffix: type, type: type, path: "grails-app/migrations")	
-		createUnitTest(name: name, suffix: type)			
 	}
