@@ -1,4 +1,4 @@
-package com.netvitesse.nvconnect.migration;
+package autobase.migration;
 
 import groovy.lang.Closure;
 import org.codehaus.groovy.grails.commons.AbstractGrailsClass;

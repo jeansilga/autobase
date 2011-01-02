@@ -187,7 +187,7 @@ class GroovyPrecondition extends Preconditions implements Precondition {
 		}
 	}
 
-  private void addNestedPrecondition(Precondition p) {
+  public void addNestedPrecondition(Precondition p) {
     impl.addNestedPrecondition(p)
   }
 

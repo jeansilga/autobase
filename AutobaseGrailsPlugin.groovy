@@ -20,6 +20,7 @@ import java.util.logging.Handler
 import liquibase.parser.factory.OpenChangeFactory
 import org.apache.log4j.*
 import org.slf4j.bridge.*
+import autobase.migration.*;
 
 import com.netvitesse.nvconnect.migration.MigrationArtefactHandler
 

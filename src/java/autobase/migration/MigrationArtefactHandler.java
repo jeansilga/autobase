@@ -1,4 +1,4 @@
-package com.netvitesse.nvconnect.migration;
+package autobase.migration;
 
 import org.codehaus.groovy.grails.commons.ArtefactHandlerAdapter;
 
