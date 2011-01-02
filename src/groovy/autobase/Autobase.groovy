@@ -1,5 +1,7 @@
 package autobase;
 
+import java.sql.Connection;
+
 import liquibase.*
 import liquibase.database.*
 import liquibase.log.LogFactory;
@@ -97,14 +99,32 @@ class Autobase {
                                   defValue
   }
 
-  private static SessionFactory getSessionFactory() {
-    def ctx = appCtxHolder.get()
-    if(!ctx) { throw new IllegalStateException("No web application context found") } 
-    return (SessionFactory)ctx.getBean('sessionFactory')
-  }
+    private static SessionFactory getSessionFactory() {
+        def ctx = appCtxHolder.get()
+        if(!ctx) {
+            throw new IllegalStateException("No web application context found")
+        }
+        return (SessionFactory)ctx.getBean('sessionFactory')
+    }
 
-	static Database getDatabase() {
-		return DatabaseFactory.instance.findCorrectDatabaseImplementation(getSessionFactory().currentSession.connection())
-	} 
+    
+    private static Connection getConnection() {
+        def ctx = appCtxHolder.get()
+        if(!ctx) {
+            throw new IllegalStateException("No web application context found")
+        }
+        
+        return (Connection) ctx.getBean("dataSource").connection
+    }
+    
+    /**
+     * Gets the Liquibase Database implementation corresponding to the
+     * application's database.
+     * 
+     * @return A Liquibase Database implementation
+     */
+    static Database getDatabase() {
+    	return DatabaseFactory.instance.findCorrectDatabaseImplementation(getConnection())
+    } 
 
 }
