@@ -20,8 +20,8 @@ class AutobaseIntegrationTests extends GrailsUnitTestCase implements Application
         super.tearDown()
     }
 
-    void testGetDatabase() {
-        Autobase.appCtxHolder.set(applicationContext) //ApplicationHolder.getApplication().getA
+    void testGetDatabaseShouldReturnAProvisionedDatabaseInstance() {
+        Autobase.appCtxHolder.set(applicationContext)
         
         def database = Autobase.getDatabase()
         assertNotNull database

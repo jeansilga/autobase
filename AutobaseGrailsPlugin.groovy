@@ -22,17 +22,19 @@ import org.apache.log4j.*
 import org.slf4j.bridge.*
 import autobase.migration.*;
 
-import com.netvitesse.nvconnect.migration.MigrationArtefactHandler
+import autobase.migration.MigrationArtefactHandler
 
 
 class AutobaseGrailsPlugin {
 
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
-    def version = '0.10.0'
+    def version = '0.11.0-SNAPSHOT'
     def grailsVersion = "1.1 > *"
    
     def dependsOn = [:]
+    
+    def loadBefore = ["hibernate"]
         
     def pluginExcludes = [ 
       "web-app/**",
