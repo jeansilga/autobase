@@ -21,7 +21,7 @@ import liquibase.parser.factory.OpenChangeFactory
 import org.apache.log4j.*
 import org.slf4j.bridge.*
 import autobase.migration.*;
-
+import autobase.migration.MigrationArtefactHandler
 
 
 class AutobaseGrailsPlugin {
@@ -29,9 +29,11 @@ class AutobaseGrailsPlugin {
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
     def version = '0.11.0'
-    def grailsVersion = "1.1 > *"
+    def grailsVersion = "1.2.1 > *"
    
     def dependsOn = [:]
+    
+    def loadBefore = ["hibernate"]
         
     def pluginExcludes = [ 
       "web-app/**",

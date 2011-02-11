@@ -1,6 +1,6 @@
 package liquibase.dsl.parser.groovy
 
-import com.netvitesse.nvconnect.migration.DefaultMigrationClass;
+import autobase.migration.DefaultMigrationClass;
 
 import grails.test.*
 

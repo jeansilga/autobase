@@ -10,7 +10,6 @@ import liquibase.exception.*;
 import groovy.sql.*;
 import org.codehaus.groovy.control.*;
 import org.w3c.dom.*;
-import java.util.*;
 import org.apache.commons.lang.StringUtils
 
 public class GroovyScriptChange implements liquibase.change.Change {
@@ -72,7 +71,7 @@ public class GroovyScriptChange implements liquibase.change.Change {
 
   String getConfirmationMessage() { "Executed Groovy in ${sourceFile}" }
 
-  Node createNode(Document currentChangeLogDOM) {
+  org.w3c.dom.Node createNode(Document currentChangeLogDOM) {
     def element = currentChangeLogDOM.createElement(changeName)
     setAttribute("sourceFile", sourceFile)
     return element
