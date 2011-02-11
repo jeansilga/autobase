@@ -79,7 +79,6 @@ class LbdslProperties {
     String password = p[DB_PASS_PROPERTY]
     String url = p[DB_URL_PROPERTY]
 
-		println "$driverClassName $url $username/$password"
 
 		Driver driver;
 		try {
