@@ -24,6 +24,10 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         compile("org.liquibase:liquibase-core:1.9.3")
+        compile("commons-beanutils:commons-beanutils:1.8.0")
+        compile("commons-io:commons-io:1.4")
+        compile("commons-lang:commons-lang:2.4")
+        compile("org.slf4j:slf4j-ext:1.5.8")
     }
 }
 
