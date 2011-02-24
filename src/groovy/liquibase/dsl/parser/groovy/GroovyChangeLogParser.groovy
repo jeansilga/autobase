@@ -82,18 +82,21 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
                
                // Now we must reorder the table in order to take into account 
                // the new element 
-               for (i in lastRunAfterIndex..0) {
+               def newElementPosition = lastRunAfterIndex
+               for (i in lastRunAfterIndex-1..0) {
                    def currentInstance = result[i].originalClass.newInstance()
                    if(currentInstance.metaClass.hasProperty(currentInstance, "runAfter") &&
                       currentInstance.runAfter?.contains(migration.originalClass)) {
                           def movingMigration = result[i]
                           result -= movingMigration
-						  if (lastRunAfterIndex + 1 < result.size())
-						  result.add(lastRunAfterIndex + 1, movingMigration)
-					      else
-						  result << movingMigration
-
+                          newElementPosition--
+						  if (newElementPosition + 1 < result.size()) {
+                              result.add(newElementPosition + 1, movingMigration)
 						  }
+					      else result << movingMigration
+                          
+					  }
+                          
                }
             }
             else {

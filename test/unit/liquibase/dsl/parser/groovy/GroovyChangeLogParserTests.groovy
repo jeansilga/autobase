@@ -35,6 +35,23 @@ class GroovyChangeLogParserTests extends GrailsUnitTestCase {
         assertTrue result.originalClass.indexOf(TwoMigration) < result.originalClass.indexOf(FourMigration)
         assertTrue result.originalClass.indexOf(ThreeMigration) < result.originalClass.indexOf(FiveMigration)
     }
+    
+    void testGetSortedMigrationClassesWithDependentMigrations() {
+        def parser = new GroovyChangeLogParser()
+        def migrationClasses = [OneMigration, UMigration, LPSMigration, 
+                                LGMigration, LCMigration,
+                                TwoMigration, ThreeMigration ]
+        
+        parser.migrationClasses = migrationClasses.collect { new DefaultMigrationClass(it) }
+        
+        def result = parser.getSortedMigrations()
+
+        println result.name
+        assertTrue result.originalClass.indexOf(LCMigration) < result.originalClass.indexOf(UMigration)
+        assertTrue result.originalClass.indexOf(UMigration) < result.originalClass.indexOf(LGMigration)
+        assertTrue result.originalClass.indexOf(LPSMigration) < result.originalClass.indexOf(LGMigration)
+    }
+    
 }
 
 class OneMigration {
@@ -59,4 +76,20 @@ class FourMigration {
 
 class FiveMigration {
     static runAfter = [ThreeMigration]
+}
+
+class UMigration {
+    static  runAfter = [LCMigration]
+}
+
+class LCMigration {
+    static runAfter = [OneMigration, TwoMigration, ThreeMigration]
+}
+
+class LPSMigration {
+    static runAfter = [LCMigration, UMigration]
+}
+
+class LGMigration {
+    static runAfter = [LPSMigration, LCMigration]
 }
