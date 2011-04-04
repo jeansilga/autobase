@@ -91,7 +91,7 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
                           result -= movingMigration
                           newElementPosition--
 						  if (newElementPosition + 1 < result.size()) {
-                              result.add(newElementPosition + 1, movingMigration)
+                              result.add(Math.max(0, newElementPosition + 1), movingMigration)
 						  }
 					      else result << movingMigration
                           
