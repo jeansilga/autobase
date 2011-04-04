@@ -15,18 +15,17 @@ package liquibase.dsl.parser.groovy
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
-import java.util.LinkedList;
-
-import grails.util.Environment
-import liquibase.*
-import liquibase.parser.*
-import liquibase.exception.*
-import liquibase.database.Database
-import org.apache.log4j.*
 
 // added by jun Chen
-import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 
+
+import grails.util.Environment
+import liquibase.DatabaseChangeLog
+import liquibase.FileOpener
+import liquibase.database.Database
+import liquibase.parser.ChangeLogParserImpl
+import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 
 /**
  *		Provides access to the properties set in the directory denoted by the "lbdsl.home" property.
@@ -72,37 +71,62 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
      * @author Antoine Roux
      */
     List<Class> getSortedMigrations() {
-        def result = new LinkedList<Class>()
-        migrationClasses.each { migration ->
-            def instance = migration.originalClass.newInstance()
-            if(migration.originalClass.metaClass.hasProperty(instance, "runAfter") &&
-               instance.runAfter?.size() > 0) {
-               int lastRunAfterIndex = Math.max(0,instance.runAfter.collect({ result.originalClass.indexOf(it) + 1 }).max())
-               result.add(lastRunAfterIndex, migration)
-               
-               // Now we must reorder the table in order to take into account 
-               // the new element 
-               def newElementPosition = lastRunAfterIndex
-               for (i in lastRunAfterIndex-1..0) {
-                   def currentInstance = result[i].originalClass.newInstance()
-                   if(currentInstance.metaClass.hasProperty(currentInstance, "runAfter") &&
-                      currentInstance.runAfter?.contains(migration.originalClass)) {
-                          def movingMigration = result[i]
-                          result -= movingMigration
-                          newElementPosition--
-						  if (newElementPosition + 1 < result.size()) {
-                              result.add(Math.max(0, newElementPosition + 1), movingMigration)
-						  }
-					      else result << movingMigration
-                          
-					  }
-                          
-               }
-            }
-            else {
-                result.add(0,migration) 
-            }
+
+        def remaining = []
+        def migrationDependencies = [:]
+
+        // phase 0: find dependencies for each migration
+        migrationClasses.each {
+            migrationDependencies[it] = findRunAfter(it)
+            remaining << it
+        }
+
+        def result = [] as LinkedList
+        while (!remaining.empty) {
+            amendDependentMigrations(migrationDependencies, result, remaining)
         }
         return result
     }
+
+    void amendDependentMigrations(migrationDependencies, result, remaining) {
+        def hasAdded = false
+        for (Iterator iter=remaining.iterator(); iter.hasNext(); ) {
+            def mig = iter.next()
+            def dependencies = migrationDependencies[mig]
+            if (dependenciesFulfilled(migrationDependencies, result, dependencies)) {
+                result << mig
+                iter.remove()
+                hasAdded = true
+            }
+        }
+        assert hasAdded, "could not resolve migrations, please check for cyclic dependencies, result $result, remaining $remaining"
+    }
+
+    /**
+     * check if result fulfills all required dependencies
+     * @param migrationDependencies
+     * @param result
+     * @param dependencies
+     * @return
+     */
+    def dependenciesFulfilled(migrationDependencies, result, dependencies) {
+        dependencies.every {
+            it in result*.originalClass
+        }
+    }
+
+    /**
+     * evaluate the static runAfter field of a migration
+     * @param migration
+     * @return an array with dependencies
+     */
+    def findRunAfter(migration) {
+        try {
+            migration.originalClass.runAfter
+        } catch (MissingPropertyException) {
+            []
+        }
+        //if (migration.originalClass.metaClass.hasProperty(instance, "runAfter") ? [] :  migration.originalClass.
+    }
+
 }

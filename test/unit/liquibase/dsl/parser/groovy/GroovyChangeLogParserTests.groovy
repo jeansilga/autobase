@@ -1,8 +1,7 @@
 package liquibase.dsl.parser.groovy
 
-import autobase.migration.DefaultMigrationClass;
-
-import grails.test.*
+import autobase.migration.DefaultMigrationClass
+import grails.test.GrailsUnitTestCase
 
 class GroovyChangeLogParserTests extends GrailsUnitTestCase {
     protected void setUp() {
@@ -29,7 +28,7 @@ class GroovyChangeLogParserTests extends GrailsUnitTestCase {
         println result.name
         assertTrue result.originalClass.indexOf(OneMigration) < result.originalClass.indexOf(TwoMigration)
         assertTrue result.originalClass.indexOf(OneBisMigration) < result.originalClass.indexOf(TwoMigration)
-        assertTrue result.originalClass.indexOf(OneBisMigration) < result.originalClass.indexOf(ThreeMigration)
+        //assertTrue result.originalClass.indexOf(OneBisMigration) < result.originalClass.indexOf(ThreeMigration) // it's okay to have tree before oneBis
         assertTrue result.originalClass.indexOf(OneMigration) < result.originalClass.indexOf(TwoMigration)
         assertTrue result.originalClass.indexOf(OneMigration) < result.originalClass.indexOf(FourMigration)
         assertTrue result.originalClass.indexOf(TwoMigration) < result.originalClass.indexOf(FourMigration)
@@ -50,6 +49,18 @@ class GroovyChangeLogParserTests extends GrailsUnitTestCase {
         assertTrue result.originalClass.indexOf(LCMigration) < result.originalClass.indexOf(UMigration)
         assertTrue result.originalClass.indexOf(UMigration) < result.originalClass.indexOf(LGMigration)
         assertTrue result.originalClass.indexOf(LPSMigration) < result.originalClass.indexOf(LGMigration)
+    }
+
+    void testNestedDependencies() {
+        def parser = new GroovyChangeLogParser()
+        def migrationClasses = [NestedDependencyMigration,  TwoMigration, OneMigration]
+        parser.migrationClasses = migrationClasses.collect { new DefaultMigrationClass(it) }
+
+        def result = parser.getSortedMigrations()
+
+        println result.name
+        assertTrue result.originalClass.indexOf(OneMigration) < result.originalClass.indexOf(TwoMigration)
+        assertTrue result.originalClass.indexOf(TwoMigration) < result.originalClass.indexOf(NestedDependencyMigration)
     }
     
 }
@@ -92,4 +103,8 @@ class LPSMigration {
 
 class LGMigration {
     static runAfter = [LPSMigration, LCMigration]
+}
+
+class NestedDependencyMigration {
+    static runAfter = [TwoMigration]
 }
