@@ -1,8 +1,6 @@
 package liquibase.dsl.parser.groovy
 
-import groovy.util.Proxy
-
-class WhereCatcher extends Proxy {
+class WhereCatcher extends groovy.util.Proxy {
 
   WhereCatcher(toWrap) {
     if(!toWrap) { throw new IllegalArgumentException("Needs a change to wrap") }

@@ -3,9 +3,8 @@ package liquibase.dsl.parser.groovy
 import liquibase.change.*
 import org.apache.commons.lang.StringUtils 
 import liquibase.dsl.properties.*
-import groovy.util.Proxy
 
-class ColumnCatcher extends Proxy {
+class ColumnCatcher extends groovy.util.Proxy {
 
   ColumnCatcher(toWrap) {
     if(!toWrap) { throw new IllegalArgumentException("Needs a change to wrap") }
