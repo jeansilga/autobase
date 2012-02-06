@@ -29,11 +29,10 @@ import liquibase.logging.LogFactory
 import liquibase.parser.factory.ChangeLogParserFactory;
 import liquibase.dsl.properties.*;
 import liquibase.parser.groovy.*;
-import org.apache.commons.lang.StringUtils
 import liquibase.dsl.parser.groovy.GroovyChangeLogParser
-import java.util.logging.Logger
-import java.util.logging.Level
+import liquibase.logging.Logger
 
+import org.apache.commons.lang.StringUtils
 import java.util.List
 import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 
@@ -64,10 +63,11 @@ class LiquibaseDsl extends Liquibase {
         lockService.waitForLock();
         
         try {
-            database.checkDatabaseChangeLogTable();
+            
             def parser = new GroovyChangeLogParser(); 	 
             DatabaseChangeLog changeLog = parser.parse(changeLogPath, fileOpener, [:], database, grailApp);
-            
+			
+			database.checkDatabaseChangeLogTable(false, changeLog, new String[0]);
             changeLog.validate(database);
             ChangeLogIterator logIterator = new ChangeLogIterator(changeLog, 
                             [
@@ -81,7 +81,7 @@ class LiquibaseDsl extends Liquibase {
             try {
                 lockService.releaseLock();
             } catch (LockException e) {
-                log.log(Level.SEVERE, "Could not release lock", e);
+                log.severe("Could not release lock", e);
             }
         }
     }

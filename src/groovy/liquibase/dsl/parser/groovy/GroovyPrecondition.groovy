@@ -51,8 +51,8 @@ class GroovyPrecondition extends PreconditionContainer implements Precondition {
 	/**
 	* Delegates the implementation of this method to the supplied <code>PreconditionLogic</code>.
 	*/
-	void check(Database database, DatabaseChangeLog changeLog) throws PreconditionFailedException {
-		impl.check(database, changeLog)
+	void check(Database database, DatabaseChangeLog changeLog, ChangeSet changeSet) throws PreconditionFailedException {
+		impl.check(database, changeLog, changeSet)
 	}
 
   void sqlCheck(Map m=[:], String sql) {

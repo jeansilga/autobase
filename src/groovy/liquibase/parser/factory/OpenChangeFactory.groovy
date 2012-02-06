@@ -2,6 +2,9 @@ package liquibase.parser.factory
 
 import liquibase.change.ChangeFactory
 import liquibase.change.Change
+import liquibase.logging.LogFactory;
+import liquibase.logging.Logger;
+
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -19,6 +22,8 @@ public class OpenChangeFactory {
   private final Map<String, Class<? extends Change>> tagToClassMap = new ConcurrentHashMap<String, Class<? extends Change>>();
   private final ChangeFactory parentFactory = ChangeFactory.getInstance()
 
+  Logger log = LogFactory.getLogger()
+  
   private void GroovyChangeFactory() {}
 
   public static OpenChangeFactory getInstance() {
@@ -49,6 +54,7 @@ public class OpenChangeFactory {
     } else {
       //the below will (in the current version...who knows what this might change to) throw a somewhat unhelpful
       //RuntimeException if the tag is not found
+	  log.warning("Tag $tagName was not found")
       result = parentFactory.create(tagName)
     }
 

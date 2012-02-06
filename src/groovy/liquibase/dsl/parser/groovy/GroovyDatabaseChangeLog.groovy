@@ -16,7 +16,7 @@ package liquibase.dsl.parser.groovy
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
 import grails.util.Environment
-import java.util.logging.*
+import liquibase.changelog.ChangeSet
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.database.Database
 import liquibase.exception.*
@@ -26,6 +26,7 @@ import liquibase.precondition.Conditional;
 import liquibase.dsl.parser.groovy.PreconditionSupport
 import org.apache.commons.io.*
 import liquibase.logging.LogFactory
+import liquibase.logging.Logger
 
 /**
 *	Root of the Groovy database change log builder.
@@ -39,7 +40,9 @@ class GroovyDatabaseChangeLog extends DatabaseChangeLog implements Conditional {
 	*/
 	GroovyDatabaseChangeLog(String physicalFilePath, Database db) {
 		super(physicalFilePath)
-    preconditions.check(db, this) 
+		for (ChangeSet changeSet : this.changeSets) {
+			preconditions.check(db, this, changeSet) 
+		}
 	}
 
 	/**
@@ -54,8 +57,8 @@ class GroovyDatabaseChangeLog extends DatabaseChangeLog implements Conditional {
     if(changeSets == null) {
       throw new IllegalStateException("ChangeSets somehow were set to null")
     }
-    body.delegate = new GroovyChangeSet(m, logicalFilePath, physicalFilePath, id, author)
-    body.delegate.fileOpener = fileOpener
+    body.delegate = new GroovyChangeSet(m, logicalFilePath, id, author)
+    body.delegate.resourceAccessor = resourceAccessor
     body.resolveStrategy = Closure.DELEGATE_FIRST
     try {
       body()

@@ -9,6 +9,7 @@ import liquibase.dsl.command.MigrateCommand
 import liquibase.dsl.properties.LbdslProperties as Props
 import liquibase.parser.groovy.*;
 import liquibase.resource.ResourceAccessor;
+import liquibase.database.jvm.JdbcConnection
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as Config
 import org.codehaus.groovy.grails.commons.ApplicationHolder as App
@@ -120,7 +121,9 @@ class Autobase {
      * @return A Liquibase Database implementation
      */
     static Database getDatabase() {
-    	return DatabaseFactory.instance.findCorrectDatabaseImplementation(getConnection())
+    	return DatabaseFactory.instance.findCorrectDatabaseImplementation(
+			new JdbcConnection(getConnection())
+		)
     } 
 
 }

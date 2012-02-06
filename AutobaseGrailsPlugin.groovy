@@ -18,6 +18,7 @@ import autobase.change.GroovyScriptChange
 import grails.util.GrailsUtil
 import java.util.logging.Handler
 import liquibase.parser.factory.OpenChangeFactory
+import liquibase.logging.LogFactory
 import org.apache.log4j.*
 import org.slf4j.bridge.*
 import autobase.migration.*;
@@ -65,11 +66,11 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
 	
 	
     private static final Closure doInstallSlf4jBridge = {
-      try {
+      /*try {
         SLF4JBridgeHandler.install()
         //here we do a little hack. The SLF4JBridgeHandler wants to be the only handler registered with the logger
         //but for some reason we get an extra console handler in the array, so we remove it
-        def logParent = liquibase.log.LogFactory.getLogger().parent
+        def logParent = LogFactory.getLogger().parent
         Handler slf4jHandler = (Handler) logParent.handlers.find { it instanceof SLF4JBridgeHandler }
         if (logParent.handlers.length > 1 && slf4jHandler) {
           def handlersToRemove = logParent.getHandlers() - slf4jHandler
@@ -79,7 +80,7 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
         }
       } catch (Throwable e) {
         log.error("Error setting up slf4j bridge, message: ${e.getMessage()}", e)  
-      }
+      }*/
     }
 
     //TODO: Formalize how we want to register change/precondition extensions conventionally

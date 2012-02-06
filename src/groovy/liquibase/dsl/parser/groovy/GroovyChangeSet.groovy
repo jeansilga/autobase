@@ -38,14 +38,13 @@ class GroovyChangeSet extends ChangeSet implements Conditional {
 	* The optional map may be used to specify "alwaysRun" (def. false), "runOnChange", (def. true), "filePath" (def. physicalFilePath),
 	* "context"	(def. empty), and "dbms" (def. empty).
 	*/
-	public GroovyChangeSet(Map m=[:], String logicalFilePath, String physicalFilePath, String id, String author=null) {
+	public GroovyChangeSet(Map m=[:], String logicalFilePath, String id, String author=null) {
 		this(
 			id,
 			author ?: LbdslProperties.instance.defaultAuthor,
 			m?.containsKey('alwaysRun')   ? m.alwaysRun   : false,
 			m?.containsKey('runOnChange') ? m.runOnChange : true,
-			m?.filePath ?: logicalFilePath ?: physicalFilePath,
-			physicalFilePath,
+			m?.filePath ?: "",
 			m?.context ?: "",
 			m?.dbms ?: ""
 		)
@@ -55,12 +54,9 @@ class GroovyChangeSet extends ChangeSet implements Conditional {
 	* The constructor for those who want to specify everything themselves.
 	*/
 	public GroovyChangeSet(String id, String author, boolean alwaysRun, 
-				boolean runOnChange, String filePath, String physicalFilePath, String contextList, String dbmsList) 
+				boolean runOnChange, String filePath, String contextList, String dbmsList) 
 	{ 
-		// modified by jun Chen
-		// super(id, author, alwaysRun, runOnChange, filePath, physicalFilePath, contextList, dbmsList)
-
-		super(id, author, alwaysRun, runOnChange, filePath, physicalFilePath, contextList, dbmsList, true)
+		super(id, author, alwaysRun, runOnChange, filePath, contextList, dbmsList, true)
 	} 
 
   void comment(String cmnt) {
@@ -85,7 +81,7 @@ class GroovyChangeSet extends ChangeSet implements Conditional {
       throw new IllegalStateException("Either parsed the file wrong or a 'column' tag is out of place (last tag: $lastTag)")
     }
     Change inst = OpenChangeFactory.instance.create(name)
-    lastTag = "${inst.changeName}[${inst.class}]"
+    lastTag = "${inst?.changeMetaData?.name}[${inst?.class}]"
     inst.resourceAccessor = resourceAccessor
 		if(args) {
       args = (args as List)
@@ -120,10 +116,6 @@ class GroovyChangeSet extends ChangeSet implements Conditional {
       } 
 		}
 		addChange((Change)inst)
-  }
-
-  public PreconditionContainer getPreconditions() {
-    return getPrecondition()
   }
 
   public String toString() {

@@ -23,6 +23,7 @@ import grails.util.Environment
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.resource.ResourceAccessor
 import liquibase.database.Database
+import liquibase.logging.LogFactory;
 import liquibase.parser.ChangeLogParserImpl
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
@@ -36,7 +37,7 @@ class GroovyChangeLogParser implements ChangeLogParserImpl {
     
     List<Class> migrationClasses
     
-    def log = Logger.getLogger(GroovyChangeLogParser)
+    def log = LogFactory.getLogger()
 	
 	public DatabaseChangeLog parse(String physicalChangeLogLocation, 
                                    ResourceAccessor fileOpener, 
