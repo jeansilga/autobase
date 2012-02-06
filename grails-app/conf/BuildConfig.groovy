@@ -24,6 +24,7 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         compile("org.liquibase:liquibase-core:2.0.3")
+		runtime("org.liquibase.ext:modify-column:2.0.0")
         compile("commons-beanutils:commons-beanutils:1.8.0")
         compile("commons-io:commons-io:1.4")
         compile("commons-lang:commons-lang:2.4")
