@@ -8,3 +8,4 @@ checkout
 plugins
 target
 web-app/WEB-INF/classes/
+target-eclipse
