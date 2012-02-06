@@ -18,10 +18,10 @@ package liquibase.dsl.command
 
 import liquibase.*;
 import liquibase.dsl.properties.*;
-import liquibase.FileSystemFileOpener
+import liquibase.resource.FileSystemResourceAccessor
 import liquibase.database.Database;
 import liquibase.dsl.command.api.LbdslCommand;
-import liquibase.log.LogFactory;
+import liquibase.logging.LogFactory;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 
@@ -38,7 +38,7 @@ class MigrateCommand implements LbdslCommand  {
 		logFile = new File(logFile)
 		validateFile(logFile)
 		Database db = LbdslProperties.instance.database
-		new LiquibaseDsl(logFile.getAbsolutePath(), new FileSystemFileOpener(), db).update(null);
+		new LiquibaseDsl(logFile.getAbsolutePath(), new FileSystemResourceAccessor(), db).update(null);
 	}
 
 	private static String promptLogFile() {

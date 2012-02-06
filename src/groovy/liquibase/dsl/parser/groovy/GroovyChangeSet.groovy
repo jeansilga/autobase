@@ -19,17 +19,19 @@ import liquibase.*;
 import liquibase.change.*;
 import liquibase.dsl.properties.*
 import liquibase.exception.*
-import liquibase.dsl.parser.groovy.ColumnCatcher
 import liquibase.parser.factory.OpenChangeFactory
-import liquibase.preconditions.Preconditions
-
+import liquibase.precondition.Conditional;
+import liquibase.precondition.core.PreconditionContainer
+import liquibase.resource.ResourceAccessor;
+import liquibase.changelog.ChangeSet
+import liquibase.dsl.properties.LbdslProperties
 /**
 * Key class for the change sets in the Groovy builder.  
 */
-class GroovyChangeSet extends ChangeSet implements ConditionallyExecuted {
+class GroovyChangeSet extends ChangeSet implements Conditional {
   private @Delegate PreconditionSupport preconditionDelegate = new PreconditionSupport(this)
   String lastTag
-  FileOpener fileOpener
+  ResourceAccessor resourceAccessor
 
 	/**
 	* Convenience constructor for the builder.  If the author is not specified, uses default as provided by <code>LbdslProperties</code>.
@@ -84,7 +86,7 @@ class GroovyChangeSet extends ChangeSet implements ConditionallyExecuted {
     }
     Change inst = OpenChangeFactory.instance.create(name)
     lastTag = "${inst.changeName}[${inst.class}]"
-    inst.fileOpener = fileOpener
+    inst.resourceAccessor = resourceAccessor
 		if(args) {
       args = (args as List)
       def stringArg = args.find { it instanceof String }
@@ -120,7 +122,7 @@ class GroovyChangeSet extends ChangeSet implements ConditionallyExecuted {
 		addChange((Change)inst)
   }
 
-  public Preconditions getPreconditions() {
+  public PreconditionContainer getPreconditions() {
     return getPrecondition()
   }
 

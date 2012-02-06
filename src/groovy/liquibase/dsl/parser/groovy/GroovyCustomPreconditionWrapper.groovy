@@ -15,10 +15,10 @@ package liquibase.dsl.parser.groovy
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
-import liquibase.*;
+import liquibase.changelog.*;
 import liquibase.database.*
 import liquibase.exception.*
-import liquibase.preconditions.*
+import liquibase.precondition.*
 
 /**
 *	A wrapper for custom preconditions as they're used by the Groovy parser.
@@ -31,10 +31,25 @@ class GroovyCustomPreconditionWrapper implements Precondition {
 		precondition = toWrap
 	}
 
-	void check(Database database, DatabaseChangeLog changeLog) throws PreconditionFailedException {
+	@Override
+	void check(Database database, DatabaseChangeLog changeLog, ChangeSet changeSet) throws PreconditionFailedException, PreconditionErrorException {
 		precondition.check(database)
 	}
 
 	String getTagName() { return "custom-${precondition.class.name}" }
+	
+	@Override
+	String getName() { return getTagName() }
+
+	@Override
+	public ValidationErrors validate(Database db) {
+		return new ValidationErrors();
+	}
+
+	@Override
+	public Warnings warn(Database arg0) {
+		return new Warnings()
+	}
+
 
 }

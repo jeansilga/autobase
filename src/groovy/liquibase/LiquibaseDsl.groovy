@@ -16,17 +16,17 @@ package liquibase
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import liquibase.DatabaseChangeLog;
-import liquibase.FileOpener;
+import liquibase.changelog.DatabaseChangeLog;
+import liquibase.resource.ResourceAccessor
 import liquibase.database.Database;
 import liquibase.exception.*;
-import liquibase.lock.LockHandler;
-import liquibase.parser.ChangeLogIterator;
-import liquibase.parser.filter.*;
+import liquibase.lockservice.LockService
+import liquibase.changelog.ChangeLogIterator;
+import liquibase.changelog.filter.*;
+import liquibase.changelog.visitor.UpdateVisitor
 import liquibase.parser.visitor.*;
-
+import liquibase.logging.LogFactory
 import liquibase.parser.factory.ChangeLogParserFactory;
-import liquibase.parser.xml.XMLChangeLogParser;
 import liquibase.dsl.properties.*;
 import liquibase.parser.groovy.*;
 import org.apache.commons.lang.StringUtils
@@ -41,18 +41,17 @@ import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 *  Executes the Liquibase command with appropriate mangling to handle the DSLs.
 */
 class LiquibaseDsl extends Liquibase {
-  private static final Logger log = liquibase.log.LogFactory.logger
+  private static final Logger log = LogFactory.logger
 	private static final String PARSER_SUFFIX_PREFIX = "lbdsl.parser.suffix"
   private final String changeLogPath;
   private final DefaultGrailsApplication grailApp
 
-	public LiquibaseDsl(String changeLogFile, FileOpener opener, Database db, DefaultGrailsApplication app ) {
-		super(changeLogFile, opener, db)
+	public LiquibaseDsl(String changeLogFile, ResourceAccessor accessor, Database db, DefaultGrailsApplication app ) {
+		super(changeLogFile, accessor, db)
     changeLogPath = changeLogFile
 	grailApp = app
   
 		// Now prep the factory
-		//ChangeLogParserFactory.register("xml", XMLChangeLogParser.class); -- XMLChangeLogParser is-not-a ChangeLogParserImpl
 		ChangeLogParserFactory.register("groovy", GroovyChangeLogParser.class);
 		LbdslProperties.instance.pluginParsers.each { 
 			ChangeLogParserFactory.register((String)it.key, (String)it.value)
@@ -61,8 +60,8 @@ class LiquibaseDsl extends Liquibase {
 
     public void update(String contexts) throws LiquibaseException {
         
-        LockHandler lockHandler = LockHandler.getInstance(database);
-        lockHandler.waitForLock();
+        LockService lockService = LockService.getInstance(database);
+        lockService.waitForLock();
         
         try {
             database.checkDatabaseChangeLogTable();
@@ -76,11 +75,11 @@ class LiquibaseDsl extends Liquibase {
                                 new ContextChangeSetFilter(contexts),
                                 new DbmsChangeSetFilter(database)
                             ]
-                            as liquibase.parser.filter.ChangeSetFilter[]);
+                            as ChangeSetFilter[]);
             logIterator.run(new UpdateVisitor(database), database);
         } finally {
             try {
-                lockHandler.releaseLock();
+                lockService.releaseLock();
             } catch (LockException e) {
                 log.log(Level.SEVERE, "Could not release lock", e);
             }

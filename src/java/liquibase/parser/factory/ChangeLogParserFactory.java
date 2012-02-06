@@ -17,8 +17,8 @@ package liquibase.parser.factory;
 //
 
 import liquibase.parser.ChangeLogParserImpl;
-import liquibase.log.LogFactory;
-import java.util.logging.Logger;
+import liquibase.logging.LogFactory;
+import liquibase.logging.Logger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

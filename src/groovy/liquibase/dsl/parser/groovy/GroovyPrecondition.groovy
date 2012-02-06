@@ -15,10 +15,12 @@ package liquibase.dsl.parser.groovy
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
-import liquibase.*;
+import liquibase.changelog.*;
 import liquibase.database.*
 import liquibase.exception.*
-import liquibase.preconditions.*
+import liquibase.precondition.*
+import liquibase.precondition.core.*
+import liquibase.precondition.core.PreconditionContainer;
 import liquibase.dsl.parser.groovy.ParamCatcher
 import liquibase.parser.factory.OpenPreconditionFactory
 
@@ -26,7 +28,7 @@ import liquibase.parser.factory.OpenPreconditionFactory
 * Key class for the preconditions in the Groovy builder.  This class wraps some kind of <code>PreconditionLogic</code>, and
 *	delegates the "check" method to it.
 */
-class GroovyPrecondition extends Preconditions implements Precondition {
+class GroovyPrecondition extends PreconditionContainer implements Precondition {
 
 	final PreconditionLogic impl
 

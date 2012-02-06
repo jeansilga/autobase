@@ -1,8 +1,8 @@
 package liquibase.parser.factory
 
 import java.util.concurrent.ConcurrentHashMap
-import liquibase.preconditions.PreconditionFactory
-import liquibase.preconditions.Precondition
+import liquibase.precondition.PreconditionFactory
+import liquibase.precondition.Precondition
 
 /**
  * Created by IntelliJ IDEA.

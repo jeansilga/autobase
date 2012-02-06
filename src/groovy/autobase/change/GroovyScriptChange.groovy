@@ -1,30 +1,38 @@
 package autobase.change;
 
+import java.util.Set;
+
 import liquibase.*;
-import liquibase.change.*;
+import liquibase.statement.*;
+import liquibase.statement.core.RawSqlStatement
+import liquibase.change.AbstractSQLChange;
+import liquibase.change.ChangeMetaData;
+import liquibase.change.CheckSum;
+import liquibase.changelog.*;
 import liquibase.database.*;
 import liquibase.database.structure.*;
 import liquibase.database.sql.*;
-import liquibase.database.sql.visitor.*; 
+import liquibase.sql.visitor.*; 
 import liquibase.exception.*;
+import liquibase.resource.ResourceAccessor;
 import groovy.sql.*;
 import org.codehaus.groovy.control.*;
 import org.w3c.dom.*;
 import org.apache.commons.lang.StringUtils
 
-public class GroovyScriptChange implements liquibase.change.Change {
+public class GroovyScriptChange extends AbstractSQLChange implements liquibase.change.Change {
   static final String TAG_NAME = 'groovyScript'
   String sourceFile;
   Set<DatabaseObject> affectedObjects = new HashSet<DatabaseObject>(1);
   def result;
 
-  FileOpener fileOpener;
+  ResourceAccessor resourceAccessor;
   ChangeSet changeSet;
 
   String getChangeName() { return TAG_NAME }
   String getTagName() { return this.changeName }
 
-  void executeStatements(Database db, List<SqlVisitor> sqlVisitors) throws JDBCException, UnsupportedChangeException {
+  void executeStatements(Database db, List<SqlVisitor> sqlVisitors) {
     if(!sourceFile) {
       throw new IllegalStateException(changeName + " tag requires 'sourceFile' property to be set")
     }
@@ -35,19 +43,19 @@ public class GroovyScriptChange implements liquibase.change.Change {
     def binding = new Binding()
     binding.setVariable("db", db)
     binding.setVariable("sql", new Sql(db.connection.underlyingConnection) )
-    binding.setVariable("fileOpener", fileOpener)
+    binding.setVariable("fileOpener", resourceAccessor)
     binding.setVariable("changeSet", changeSet)
     binding.setVariable("sourceFile", sourceFile)
     binding.setVariable("logicalName", logicalName)
     def shell = new GroovyShell(binding)
-    result = shell.evaluate(fileOpener.getResourceAsStream(sourceFile).text, logicalName)
+    result = shell.evaluate(resourceAccessor.getResourceAsStream(sourceFile).text, logicalName)
   }
 
   void saveStatements(Database db, List<SqlVisitor> sqlVisitors, Writer writer) throws IOException, UnsupportedChangeException,  StatementNotSupportedOnDatabaseException {
     writer << (db.lineComment + " Insert arbitrary Groovy processing from ${sourceFile} here")
   }
 
-  void executeRollbackStatements(Database database, List<SqlVisitor> sqlVisitors) throws JDBCException, UnsupportedChangeException, RollbackImpossibleException {
+  void executeRollbackStatements(Database database, List<SqlVisitor> sqlVisitors) {
     throw new RollbackImpossibleException("Can't roll back arbitrary Groovy code")
   }
 
@@ -59,7 +67,7 @@ public class GroovyScriptChange implements liquibase.change.Change {
     throw new RollbackImpossibleException("Can't roll back arbitrary Groovy code")
   }
 
-  SqlStatement[] generateStatements(Database database) throws UnsupportedChangeException {
+  SqlStatement[] generateStatements(Database database) {
     return ([new RawSqlStatement(database.lineComment + " Insert arbitrary Groovy processing from ${sourceFile} here")] as SqlStatement[])
   }
 
@@ -78,21 +86,31 @@ public class GroovyScriptChange implements liquibase.change.Change {
   }
 
   String getMD5Sum() {
-    return liquibase.util.MD5Util.computeMD5(fileOpener.getResourceAsStream(sourceFile))
+    return liquibase.util.MD5Util.computeMD5(resourceAccessor.getResourceAsStream(sourceFile))
   }
 
   void setUp() throws SetupException {}
 
   Set<DatabaseObject> getAffectedDatabaseObjects() { return affectedObjects }
 
-  void validate(Database database) throws InvalidChangeDefinitionException {
+  ValidationErrors validate(Database database) {
     if(!sourceFile) {
-      throw new InvalidChangeDefinitionException("No source file provided", this)
+		def error = new ValidationErrors()
+		error.addError("No source file provided")
+		return error
     }
-    if(!fileOpener.getResourceAsStream(sourceFile)) {
-      throw new IllegalStateException("Could not open ${sourceFile} for some unknown reason")
+    if(!resourceAccessor.getResourceAsStream(sourceFile)) {
+		def error = new ValidationErrors()
+		error.addError("Could not open ${sourceFile} for some unknown reason")
+		return error
     }
   }
+  
+
+	@Override
+	public boolean supportsRollback(Database arg0) {
+		return false;
+	}
 
 }
 

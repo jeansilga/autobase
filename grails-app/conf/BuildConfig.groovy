@@ -8,7 +8,7 @@ grails.project.dependency.resolution = {
         // uncomment to disable ehcache
         // excludes 'ehcache'
     }
-    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
         grailsPlugins()
         grailsHome()
@@ -23,7 +23,7 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
     dependencies {
-        compile("org.liquibase:liquibase-core:1.9.3")
+        compile("org.liquibase:liquibase-core:2.0.3")
         compile("commons-beanutils:commons-beanutils:1.8.0")
         compile("commons-io:commons-io:1.4")
         compile("commons-lang:commons-lang:2.4")

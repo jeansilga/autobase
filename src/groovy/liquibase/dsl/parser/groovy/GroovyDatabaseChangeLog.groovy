@@ -17,18 +17,22 @@ package liquibase.dsl.parser.groovy
 //
 import grails.util.Environment
 import java.util.logging.*
-import liquibase.*
+import liquibase.changelog.DatabaseChangeLog
 import liquibase.database.Database
 import liquibase.exception.*
 import liquibase.parser.ChangeLogParser
+import liquibase.precondition.Conditional;
+//import liquibase.dsl.parser.groovy.ConditionallyExecuted
+import liquibase.dsl.parser.groovy.PreconditionSupport
 import org.apache.commons.io.*
+import liquibase.logging.LogFactory
 
 /**
 *	Root of the Groovy database change log builder.
 */
-class GroovyDatabaseChangeLog extends DatabaseChangeLog implements ConditionallyExecuted {
+class GroovyDatabaseChangeLog extends DatabaseChangeLog implements Conditional {
   private @Delegate PreconditionSupport preconditionDelegate = new PreconditionSupport(this)
-  private static final Logger log = liquibase.log.LogFactory.logger
+  private static final Logger log = LogFactory.logger
 
 	/**
 	*	Convenience method in case a user feels like hand-rolling the change log for some reason.
@@ -89,18 +93,6 @@ class GroovyDatabaseChangeLog extends DatabaseChangeLog implements Conditionally
           } else {
             log.fine("Skipping file ${it}")
           }
-        } else if (it.file =~ baselinePattern) {
-          def m = it.file =~ baselinePattern
-          def env = m[0][1]
-          if (env == Environment.current.name) {
-            // This is the current environment, so execute this baseline
-            // migration script.
-            log.info("Including baseline migration ${it}")
-            includeXml(it.file)
-          }
-          else {
-            log.fine("Skipping baseline migration ${it} - different environment")
-          }
         } else {
           log.info("Including directory ${it}")
           includeAll(it.file)
@@ -151,15 +143,6 @@ class GroovyDatabaseChangeLog extends DatabaseChangeLog implements Conditionally
     }
 	}
 
-  /**
-   * Includes a standard Liquibase XML changelog.
-   */
-  void includeXml(String fileName) {
-    def changeLog = new ChangeLogParser().parse(fileName, fileOpener)
-    for (changeSet in changeLog.changeSets) {
-      this.addChangeSet(changeSet)
-    }
-  }
 
   private final Map storage = [:]
   def propertyMissing(String name, value) { 

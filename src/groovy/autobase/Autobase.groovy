@@ -4,10 +4,12 @@ import java.sql.Connection;
 
 import liquibase.*
 import liquibase.database.*
-import liquibase.log.LogFactory;
+import liquibase.logging.LogFactory;
 import liquibase.dsl.command.MigrateCommand
 import liquibase.dsl.properties.LbdslProperties as Props
 import liquibase.parser.groovy.*;
+import liquibase.resource.ResourceAccessor;
+
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as Config
 import org.codehaus.groovy.grails.commons.ApplicationHolder as App
 import org.springframework.web.context.WebApplicationContext as WAC
@@ -21,9 +23,7 @@ import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.codehaus.groovy.grails.web.context.ServletContextHolder as SCH
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import grails.util.GrailsUtil
-import org.apache.log4j.*;
 
 class Autobase {
 
@@ -81,12 +81,8 @@ class Autobase {
   }
 
 
-  static FileOpener findFileOpener() {
-    if(App.application?.isWarDeployed()) {
-      return new WarFileOpener()
-    } else {
-      return new FileSystemFileOpener()
-    }
+  static ResourceAccessor findResourceAccessor() {
+      return new GrailsClassLoaderResourceAccessor()
   }
 
   static void assignSystemProperties() {

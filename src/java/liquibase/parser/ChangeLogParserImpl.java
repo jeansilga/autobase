@@ -16,9 +16,9 @@ package liquibase.parser;
 //    along with Liquibase-DSL.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import liquibase.DatabaseChangeLog;
-import liquibase.FileOpener;
+import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
+import liquibase.resource.ResourceAccessor;
 
 import java.util.Map;
 import java.util.List;
@@ -33,6 +33,6 @@ public interface ChangeLogParserImpl {
 	/**
 	*	 Method responsible for parsing a particular file.
 	*/
-	public DatabaseChangeLog parse(String physicalChangeLogLocation, FileOpener fileOpener, Map changeLogProperties, Database db, DefaultGrailsApplication app );
+	public DatabaseChangeLog parse(String physicalChangeLogLocation, ResourceAccessor fileOpener, Map changeLogProperties, Database db, DefaultGrailsApplication app );
 
 }

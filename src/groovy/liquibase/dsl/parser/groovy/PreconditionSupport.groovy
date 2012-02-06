@@ -1,11 +1,12 @@
 package liquibase.dsl.parser.groovy
 
 import org.apache.commons.lang.StringUtils
+import liquibase.precondition.Conditional
 
 public class PreconditionSupport {
-  private ConditionallyExecuted owner
+  private Conditional owner
 
-  PreconditionSupport(ConditionallyExecuted owner) {
+  PreconditionSupport(Conditional owner) {
     this.owner = owner
     owner.setPreconditions(new GroovyPrecondition())
   }
