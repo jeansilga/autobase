@@ -54,7 +54,6 @@ public class OpenChangeFactory {
     } else {
       //the below will (in the current version...who knows what this might change to) throw a somewhat unhelpful
       //RuntimeException if the tag is not found
-	  log.warning("Tag $tagName was not found")
       result = parentFactory.create(tagName)
     }
 
