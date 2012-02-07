@@ -17,12 +17,14 @@ The approach to this plugin is to leave the database update mode ("hbm2ddl.auto"
     <resolvers>
       <resolver type='grailsPlugins' name='grailsPlugins' />
       <resolver type='mavenCentral' />
+      <resolver type='mavenLocal' />
     </resolvers>
-    <dependency group='org.liquibase' name='liquibase-core' version='2.0.3' conf='compile' transitive='true' />
     <dependency group='commons-beanutils' name='commons-beanutils' version='1.8.0' conf='compile' transitive='true' />
-    <dependency group='commons-io' name='commons-io' version='1.4' conf='compile' transitive='true' />
+    <dependency group='org.liquibase.ext' name='modify-column' version='2.0.0' conf='runtime' transitive='true' />
     <dependency group='commons-lang' name='commons-lang' version='2.4' conf='compile' transitive='true' />
     <dependency group='org.slf4j' name='slf4j-ext' version='1.5.8' conf='compile' transitive='true' />
+    <dependency group='org.liquibase' name='liquibase-core' version='2.0.3' conf='compile' transitive='true' />
+    <dependency group='commons-io' name='commons-io' version='1.4' conf='compile' transitive='true' />
   </dependencies>
   <behavior />
 </plugin>

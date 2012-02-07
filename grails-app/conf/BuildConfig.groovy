@@ -13,7 +13,7 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
 
-        // uncomment the below to enable remote dependency resolution
+		// uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         //mavenLocal()
         mavenCentral()
@@ -29,6 +29,6 @@ grails.project.dependency.resolution = {
         compile("commons-io:commons-io:1.4")
         compile("commons-lang:commons-lang:2.4")
         compile("org.slf4j:slf4j-ext:1.5.8")
-    }
+	}
 }
 
