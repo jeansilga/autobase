@@ -29,7 +29,7 @@ class AutobaseGrailsPlugin {
 
     private static final Logger log = Logger.getLogger(AutobaseGrailsPlugin);
 
-    def version = '1.0.0.0-SNAPSHOT'
+    def version = '1.0.0.0'
     def grailsVersion = "1.2.1 > *"
    
     def dependsOn = [:]
