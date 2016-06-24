@@ -1,3 +1,0 @@
-A Grails plugin which aims to automate database management as much as possible by leveraging the established Liquibase technology.
-
-The documentation can be found at http://grails.org/plugin/autobase

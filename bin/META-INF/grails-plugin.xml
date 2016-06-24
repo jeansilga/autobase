@@ -1,0 +1,25 @@
+<plugin name='autobase' version='SNAPSHOT' grailsVersion='3.1.8 &gt; *'>
+  <type>AutobaseGrailsPlugin</type>
+  <authorEmail></authorEmail>
+  <dependsOn />
+  <author>Robert Fischer, Jun Chen, Antoine roux, Jean Silga</author>
+  <watchedResources>[file:grails-app/migrations/*Migration.groovy]</watchedResources>
+  <documentation>http://grails.org/plugin/autobase</documentation>
+  <profiles>[web]</profiles>
+  <description>This plugin marries the established Liquibase core with Grails development processes in order to to minimze the amount of database code you have to think about.
+
+The approach to this plugin is to leave the database update mode ("hbm2ddl.auto" value) as "update", and to manage alterations to the database schema through checking in changesets to a folder.  The changesets are made up of Liquibase's many "refactorings": http://www.liquibase.org/manual/home#available_database_refactorings
+</description>
+  <title>Autobase</title>
+  <loadBefore>[hibernate]</loadBefore>
+  <version />
+  <artefacts>[new autobase.migration.MigrationArtefactHandler()]</artefacts>
+  <grailsVersion>3.1.8 &gt; *</grailsVersion>
+  <license>APACHE</license>
+  <pluginExcludes>[grails-app/**, grails-app/assets/**]</pluginExcludes>
+  <name>autobase</name>
+  <resources>
+    <resource>autobase.UrlMappings</resource>
+    <resource>autobase.Application</resource>
+  </resources>
+</plugin>

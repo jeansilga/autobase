@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="autobase.AutobaseIntegrationTests" tests="1" skipped="0" failures="1" errors="0" timestamp="2016-06-22T13:02:05" hostname="nvjean-2.local" time="7.875">
+  <properties/>
+  <testcase name="testGetDatabaseShouldReturnAProvisionedDatabaseInstance" classname="autobase.AutobaseIntegrationTests" time="7.875">
+    <failure message="java.lang.IllegalStateException: No web application context found" type="java.lang.IllegalStateException">java.lang.IllegalStateException: No web application context found
+	at autobase.Autobase.getConnection(Autobase.groovy:112)
+	at autobase.Autobase.getDatabase(Autobase.groovy:126)
+	at autobase.AutobaseIntegrationTests.testGetDatabaseShouldReturnAProvisionedDatabaseInstance(AutobaseIntegrationTests.groovy:21)
+</failure>
+  </testcase>
+  <system-out><![CDATA[Grails application running at http://localhost:8080 in environment: test
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

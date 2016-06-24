@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="liquibase.dsl.parser.groovy.GroovyChangeLogParserTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2016-06-22T16:04:03" hostname="nvjean-2.local" time="1.039">
+  <properties/>
+  <testcase name="testGetSortedMigrationClasses" classname="liquibase.dsl.parser.groovy.GroovyChangeLogParserTests" time="1.016"/>
+  <testcase name="testGetSortedMigrationClassesWithDependentMigrations" classname="liquibase.dsl.parser.groovy.GroovyChangeLogParserTests" time="0.017"/>
+  <testcase name="testNestedDependencies" classname="liquibase.dsl.parser.groovy.GroovyChangeLogParserTests" time="0.006"/>
+  <system-out><![CDATA[[One, Three, OneBis, Two, Four, Five]
+[One, Two, Three, LC, U, LPS, LG]
+[One, Two, NestedDependency]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
